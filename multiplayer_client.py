@@ -1,10 +1,11 @@
-import socket, pygame, pickle, sys
+import socket, pygame, pickle, sys, time
 from packetstructs import PacketStruct as _ps
 
 
 class PacketStruct(_ps):
     def __repr__(self):
-        return f"PacketStruct({self.x}, {self.y}, {self.t})"
+        return (f"PacketStruct({self.x}, {self.y}, {self.t},"
+                f" last_ping: {self.lp}), idle: {self.i}")
 
 
 SERVER_IP = "192.168.1.72"
@@ -14,14 +15,16 @@ username = input("Username?: ")
 
 
 def main():
-    def get_player_data(player_data) -> dict[str, PacketStruct]:
-        print(f"Sending: {len(pickle.dumps(PacketStruct(username, x, y, 0)))}, TO; {(SERVER_IP, SERVER_PORT)}")
-        client_socket.sendto(pickle.dumps(PacketStruct(username, x, y, 0)), (SERVER_IP, SERVER_PORT))
+    def get_player_data() -> dict[str, PacketStruct]:
+        pkt = PacketStruct(username, x, y, 0, int(time.time()))
+        print(f"Sending: {len(pickle.dumps(pkt))}, TO: {(SERVER_IP, SERVER_PORT)}")
+        client_socket.sendto(pickle.dumps(pkt), (SERVER_IP, SERVER_PORT))
 
         print("Waiting for data")
-        data, _ = client_socket.recvfrom(2048)
+        data, _ = client_socket.recvfrom(4096)
+        print(ud := pickle.loads(data))
 
-        return pickle.loads(data)
+        return ud
 
     pygame.init()
 
@@ -59,7 +62,7 @@ def main():
 
         print(x, y)
 
-        p_data = get_player_data(PacketStruct(username, x, y, 0))
+        p_data = get_player_data()
 
         # Fill the background with white
         window.fill(white)
@@ -68,7 +71,7 @@ def main():
         pygame.draw.circle(window, black, (x, y), 20)
 
         for player in p_data.items():
-            if player[0] != username:
+            if player[0] != username and not player[1].i:
                 pygame.draw.circle(window, red, (player[1].x, player[1].y), 20)
 
         pygame.display.flip()
