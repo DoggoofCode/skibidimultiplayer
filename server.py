@@ -1,8 +1,8 @@
 import socket
 import pickle
-from packetstructs import PacketStruct as _ps
 import threading as thg
 import time
+from packetstructs import PacketStruct as _ps
 
 
 class PacketStruct(_ps):
@@ -43,6 +43,6 @@ if __name__ == '__main__':
     SERVER_IP = "192.168.1.72"
     SERVER_PORT = 64321
     player_position: dict[str: PacketStruct] = {}
-    player_position_lock = thg.Lock()
+
     thg.Thread(target=run_server).start()
     thg.Thread(target=remove_disconnected).start()
