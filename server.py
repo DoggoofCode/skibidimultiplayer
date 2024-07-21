@@ -40,6 +40,7 @@ def run_server():
 
 
 if __name__ == '__main__':
+    raise DeprecationWarning("run guiserver.py instead")
     SERVER_IP = "192.168.1.72"
     SERVER_PORT = 64321
     player_position: dict[str: PacketStruct] = {}
