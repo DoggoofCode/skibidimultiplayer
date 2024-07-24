@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b0dc408a-77cb-4611-88df-4d6b4c3584aa" name="Changes" comment="added idling and live server feed. added versions to pstrct">
-      <change afterPath="$PROJECT_DIR$/guiserver.py" afterDir="false" />
+    <list default="true" id="b0dc408a-77cb-4611-88df-4d6b4c3584aa" name="Changes" comment="actually deprecated server.py">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/guiserver.py" beforeDir="false" afterPath="$PROJECT_DIR$/guiserver.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/multiplayer_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/multiplayer_client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packetstructs.py" beforeDir="false" afterPath="$PROJECT_DIR$/packetstructs.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -110,12 +111,30 @@
       <option name="project" value="LOCAL" />
       <updated>1721465976038</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="created a new gui for the server side script that has an active pause and killing of threads, from now on running the server.py, will be deprecated">
+      <option name="closed" value="true" />
+      <created>1721552927331</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1721552927331</updated>
+    </task>
+    <task id="LOCAL-00004" summary="actually deprecated server.py">
+      <option name="closed" value="true" />
+      <created>1721552978890</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1721552978890</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="basic multiplayer system done" />
     <MESSAGE value="added idling and live server feed. added versions to pstrct" />
-    <option name="LAST_COMMIT_MESSAGE" value="added idling and live server feed. added versions to pstrct" />
+    <MESSAGE value="created a new gui for the server side script that has an active pause and killing of threads, from now on running the server.py, will be deprecated" />
+    <MESSAGE value="actually deprecated server.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="actually deprecated server.py" />
   </component>
 </project>

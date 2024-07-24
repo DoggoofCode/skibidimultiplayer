@@ -5,13 +5,36 @@ import time
 import queue
 import socket
 import pickle
-from packetstructs import PacketStruct as _ps
+from packetstructs import (
+    PacketStruct as _ps,
+    ClientPacketStruct as _cps,
+    ServerPacketStruct as _sps,
+    PlayerStruct as _pls,
+)
 
 
 class PacketStruct(_ps):
     def __repr__(self):
         return (f"PacketStruct({self.x}, {self.y}, {self.t},"
                 f" last_ping: {self.lp}), idle: {self.i}")
+
+
+class ClientPacketStruct(_cps):
+    def __repr__(self):
+        return (f"ClientPacketStruct(Player Info: {self.pi},"
+                f" Action Log: {self.log})")
+
+
+class ServerPacketStruct(_sps):
+    def __repr__(self):
+        return (f"ClientPacketStruct(Players: {self.p},"
+                f" Environment: {self.env})")
+
+
+class PlayerStruct(_pls):
+    def __repr__(self):
+        return (f"PlayerData(x:{self.x}, y:{self.y},"
+                f" theta:{self.t}, attrs: {self.a})")
 
 
 # Assuming PacketStruct is defined elsewhere
@@ -27,7 +50,7 @@ class ThreadedApp:
         self.root.title("Threaded Application GUI")
         self.root.geometry("600x400")
 
-        self.data = {}
+        self.player_data = {}
         self.scraper_thread = None
         self.editor_thread = None
         self.stop_event = threading.Event()
@@ -96,18 +119,24 @@ class ThreadedApp:
 
             while not self.stop_event.is_set():
                 try:
-                    data, addr = server_socket.recvfrom(2048)
+                    packet_size, addr = server_socket.recvfrom(64)
+                    data, addr = server_socket.recvfrom(int(packet_size.decode()))
                     data = pickle.loads(data)
-                    # print(f"Data Received: {data}")
+                    print(f"Data Received: {data}")
 
-                    if data.v == "0.0.1":
-                        self.data[data.u] = data
-                        concise_dict = {k: v for k, v in self.data.items() if not v.i}
-                        server_socket.sendto(pickle.dumps(concise_dict), addr)
-
-                        self.update_queue.put(self.data.copy())
-                    else:
+                    if data.v != "0.0.2":
                         server_socket.sendto(b"Wrong Version", addr)
+                        break
+
+                    self.player_data[data.pi.u] = data.pi
+                    concise_dict = {k: v for k, v in self.player_data.items() if not v.i}
+                    sending_info = pickle.dumps(ServerPacketStruct(concise_dict, []))
+
+                    server_socket.sendto(f"{len(sending_info)}".encode(), addr)
+                    server_socket.sendto(sending_info, addr)
+
+                    self.update_queue.put(self.player_data.copy())
+
                 except socket.timeout:
                     # This allows us to periodically check the stop_event
                     continue
@@ -118,11 +147,11 @@ class ThreadedApp:
 
     def editor_function(self):
         while not self.stop_event.is_set():
-            if self.data:
-                for player in self.data.items():
+            if self.player_data:
+                for player in self.player_data.items():
                     if time.time() > player[1].lp + 2.5:
-                        self.data[player[0]].i = True
-                self.update_queue.put(self.data.copy())
+                        self.player_data[player[0]].i = True
+                self.update_queue.put(self.player_data.copy())
             time.sleep(0.01)  # Small delay to prevent excessive CPU usage
 
     def check_update_queue(self):
